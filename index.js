@@ -19,13 +19,15 @@ class BetterMatch {
       let once = true;
       _.forEach(this.match, val => {
         if (this.whole) {
-          let match = this.minmatch(val, this.origin);
+          let match = this.minmatch(val.name, this.origin);
           if (match <= this.similarity) {
-            this.whole.push({ text: val, similarity: match });
+              let obj = val;
+              obj.similarity = match;
+            this.whole.push(obj);
           }
         } else if (once) {
           once = false;
-          let match = this.minmatch(val, this.origin);
+          let match = this.minmatch(val.name, this.origin);
           if (match <= this.similarity) { ret = val; }
         }
       });
@@ -33,8 +35,10 @@ class BetterMatch {
     if (this.whole) {
       let ret = [];
       _.forEach(_.sortBy(this.whole, [o => { return Number(o.similarity); }]), val => {
-        ret.push(val.text);
-      });
+              delete val.similarity;
+              ret.push(val);
+          }
+      );
       return ret;
     } else { return ret; }
   }
@@ -48,7 +52,7 @@ class BetterMatch {
     let ret = null;
     let once = true;
     _.forEach(arr, val => {
-      if (once && origin.indexOf(val) !== -1) {
+      if (once && origin.indexOf(val.name) !== -1) {
         once = false;
         ret = val;
       }
@@ -94,7 +98,6 @@ class BetterMatch {
         }
       }
     });
-
     return similarity;
   }
 }
